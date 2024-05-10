@@ -1,10 +1,21 @@
 # Demo using the Seam API
 
+This guide assumes you have already setup a workspace in Seam. Head over to console.seam.co  to get started.
+
 1. Create a Seam account at https://console.seam.co See quickstart guide
 2. You will start with a Sandbox workspace
 3. Create a sandbox device. In this example we'll use Yale.
 
-
+### Dummy data 
+```
+Guest name:	“Jane Doe”
+Guest email:	“jane@example.com”
+Reservation check-in:	4pm, January 8th, 2024
+Reservation check-out: 	12pm, January 12th, 2024
+ Guest telephone number:	650-394-3042 
+Listing Name: 	“123 Main St”
+Listing Smart Lock ID: 	“abc-1234”
+```
 
 [Seam capability guide for smart locks](https://docs.seam.co/latest/capability-guides/smart-locks)
 
@@ -13,7 +24,7 @@ Understand the lifecycle of access codes. Side effects of Seam API
 
 
 
-## Task 1
+## Task
 
 Overview
 Yessty is a property management software (“PMS”) that helps Airbnb hosts manage their listings. Yessty confirms incoming Airbnb reservations and automates sending guest check-in instructions such as house directions, wifi passwords,...etc. Yessty competes with other short-term rental PMSs such as Hostaway, Hospitable, and Guesty.
@@ -41,7 +52,7 @@ In your code sample, please show the following:
 * You can submit everything in a single file with “//... later on” comments in between requests
 
 Elements of a solid answer:
-* Show the exact API routes being used
+* Show the exact API routes being used [Seam API endpoints](https://docs.seam.co/latest/api-clients/overview)
 * Show the important parameters being provided to the Seam API
 * Show some of the side-effects of making API calls to Seam (e.g. Seam programming the code onto the device)
 * Nice code sample formatting, including comments to help the customer understand the purpose of each item.
@@ -67,4 +78,15 @@ Events and webhooks
 https://docs.seam.co/latest/api-clients/events
 Svix docs https://docs.svix.com/
 
-`access_code.failed_to_set_on_device event`
+When you request for a device to perform an action, the Seam API will immediately return an Action Attempt object. In the background, the Seam API will perform the action. This Action Attempt allows you to keep track of the progress of your Action.
+
+### Events
+
+
+`access_code.created` | An access_code has been created.
+
+`access_code.changed` | An access_code status or property has changed.
+
+`access_code.set_on_device` | 	An access_code has been programmed onto a device.
+
+`access_code.failed_to_set_on_device event` | An error occurred in trying to program the code onto a device. This indicates a failure occurred but the failure might be temporary and may recover (in which case an access_code.set_on_device event will be sent).
