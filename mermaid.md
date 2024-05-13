@@ -6,17 +6,31 @@ sequenceDiagram
     participant Lock
     Guest->>Yessty: reservation
     Yessty->>Seam: POST /access_codes/create
-    Note over Yessty,Seam: deviced_id, starts_at, ends_at, code, <br/> backup_code
+    Note over Yessty,Seam: deviced_id, starts_at, ends_at, code, <br/> use_backup_access_code_pool = True
     Seam-->>Yessty: Action Attempt
+    Yessty->>Seam: GET /access_codes/get
+    Seam-->>Yessty: respond with access code
+    Note left of Guest: 48 hours before check in
     Yessty->>Guest: send access_code via email/SMS
     Note over Guest,Yessty: access_code 48 hours before 'starts_at'
     Seam->>Lock: set access code on device
     Lock-->>Seam: access
-    alt failed to set
-        Lock->>Seam: failed
+    Note left of Guest: 2 hours before check in starts_at
+    alt access_code failed to set on device
+        Lock->>Seam: failed to set
         Note over Seam,Lock: access_code.failed_to_set_on_device
-        Seam->>Yessty: failed
-    else
-        Yessty->>Guest: ok
+        Seam->>Yessty: Webhook 
+        Note over Seam: webhooks must be set up
+        Seam->>Yessty: EVENT: 
+        Yessty->>Guest: 2hrs before check in send 
+
+    else access_code set success
+        Note left of Guest: starts_at
+        Seam->>Yessty: EVENT: access_code set on device
+        Seam->>Yessty: EVENT: Door is unlocked
+
     end
+    Note left of Guest: ends_at
+    Seam->>Lock: access_code is removed at 'ends_at'
+    Seam->>Yessty: access_code was removed from device
 ```
