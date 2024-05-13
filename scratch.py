@@ -62,13 +62,7 @@ seam.access_codes.create(
 )
 
 
-# A backup access code pool is a collection of pre-programmed access codes stored on a device, ready for use.
-# These codes are programmed in addition to the regular access codes on Seam, serving as a safety net for any issues with the primary codes.
-# If there's ever a complication with a primary access code—be it due to intermittent connectivity,
-# manual removal from a device, or provider outages—a backup code can be retrieved.
-# Its end time can then be adjusted to align with the original code, facilitating seamless and uninterrupted access.
-# To bulletproof your implementation of access codes, it's essential to maintain a pool of backup access codes for each device.
-# Seam provides a robust implementation of this backup pool system, and this article will help you learn how to use our backup access pool system.
+
 
 
 my_device = seam.devices.list()[0]
@@ -88,23 +82,7 @@ backup_code = seam.access_codes.pull_backup_access_code(access_code=DUMMY_ACCESS
 
 print(backup_code)
 
-# Warning: many_active_backup_codes
-# Multiple back up codes have been pulled from the device. This usually indicates that Seam is having issues programming access codes onto the device. Check if the device is offline or if there are other issues.
-# Warning: partial_backup_access_code_pool
-# Seam is having trouble refilling the back up access code pool. This could result from device connection issues or from the device running out of space for new codes.
-# Error: empty_backup_access_code_pool
-# There are no more back up codes available in the pool. This can happen when you've just enabled the back up pool feature, or when all of the backup access codes have been used.
-# When you request for a device to perform an action, the Seam API will immediately return an Action Attempt object.
-# In the background, the Seam API will perform the action.
-# This Action Attempt allows you to keep track of the progress of your Action.
-# If you require offline access codes https://docs.seam.co/latest/capability-guides/smart-locks/access-codes#offline-access-codes
-# For locks that support setting codes with a schedule Seam will preload access codes
-# onto the device a full 72 hours before the starts_at timestamp of a Time Bound code.
-#  BACKUP CODES
-# To confirm that Seam supports back up code pools for your device,
-# check the device's properties by inspecting the response from Get Device or List Devices.
-# Ensure that the device's properties.supports_backup_access_code_pool is true.
-# is_backup_access_code_available
+
 
 
 def webhook_handler(request):
