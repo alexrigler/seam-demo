@@ -2,6 +2,9 @@ from datetime import datetime #remember to handle datetimes in real world
 from seam import Seam
 
 
+DUMMY_DEVICE_ID = ""
+DUMMY_ACCESS_CODE_ID = ""
+
 yessty_payload = {
     "guest_name": "Jane Doe",
     "guest_email": "jane@example.com",
@@ -39,9 +42,13 @@ seam.access_codes.create(
     )
 
 
-# A backup access code pool is a collection of pre-programmed access codes stored on a device, ready for use. These codes are programmed in addition to the regular access codes on Seam, serving as a safety net for any issues with the primary codes.
-# If there's ever a complication with a primary access code—be it due to intermittent connectivity, manual removal from a device, or provider outages—a backup code can be retrieved. Its end time can then be adjusted to align with the original code, facilitating seamless and uninterrupted access.
-# To bulletproof your implementation of access codes, it's essential to maintain a pool of backup access codes for each device. Seam provides a robust implementation of this backup pool system, and this article will help you learn how to use our backup access pool system.
+# A backup access code pool is a collection of pre-programmed access codes stored on a device, ready for use. 
+# These codes are programmed in addition to the regular access codes on Seam, serving as a safety net for any issues with the primary codes.
+# If there's ever a complication with a primary access code—be it due to intermittent connectivity, 
+# manual removal from a device, or provider outages—a backup code can be retrieved. 
+# Its end time can then be adjusted to align with the original code, facilitating seamless and uninterrupted access.
+# To bulletproof your implementation of access codes, it's essential to maintain a pool of backup access codes for each device. 
+# Seam provides a robust implementation of this backup pool system, and this article will help you learn how to use our backup access pool system.
 
 
 my_device = seam.devices.list()[0]
@@ -50,9 +57,9 @@ my_device.properties.supports_backup_access_code_pool
 
 # list or get access codes
 
-access_code = seam.access_codes.get("dc83d82d-55d2-4178-8c8c-10382311aed2")
+access_code = seam.access_codes.get()
 
-pprint("Is backup access code available: " 
+print("Is backup access code available: " 
     + str(access_code.is_backup_access_code_available))
 
 access_code_id = "dc83d82d-55d2-4178-8c8c-10382311aed2"
@@ -61,7 +68,7 @@ backup_code = seam.access_codes.pull_backup_access_code(
     access_code = access_code_id
 )
 
-pprint(backup_code)
+print(backup_code)
 
 # Warning: many_active_backup_codes
 
@@ -113,3 +120,61 @@ def webhook_handler(request):
     # Do something with the message...
 
     return HttpResponse(status=204)
+
+# Show the exact API routes being used
+# Show the important parameters being provided to the Seam API
+# Show some of the side-effects of making API calls to Seam (e.g. Seam programming the
+# code onto the device)
+# Nice code sample formatting, including comments to help the customer understand the
+# purpose of each item.
+
+# Dummy Data
+# Guest name: “Jane Doe”
+# Guest email: “jane@example.com”
+# Guest telephone number: 650-394-3042 ⇐ bonus: many guests prefer the last 4-digit of their phone to be their access code for a smart lock; 
+# the Seam API has a request parameter to set an access code to whatever you’d like, assuming the device permits it
+# Reservation check-in: 4pm, January 8th, 2024
+# Reservation check-out: 12pm, January 12th, 2024
+# Listing Name: “123 Main St”
+# Listing Smart Lock ID: “abc-1234”
+
+# bonus: many guests prefer the last 4-digit of their phone to be their access code for a smart lock; 
+# the Seam API has a request parameter to set an access code to whatever you’d like, assuming the device permits it
+
+# Endpoints
+# /devices/list/
+# /devices/get/ https://docs.seam.co/latest/api-clients/devices/get-device 
+# /events/list/ https://docs.seam.co/latest/api-clients/events/list-events 
+
+
+from seamapi import Seam
+from django.http import HttpResponse
+from django.views.generic import View
+
+# export SEAM_API_KEY=*** environment variable picked up here
+
+seam = Seam()
+
+# Retrieve all authroized locks and select the first lock.
+some_lock = seam.locks.list()[0]
+
+# Inspect this device to see which capabilities it supports.
+print(some_lock.capabilities_supported)
+# ['access_code', 'lock']
+
+# This device supports the 'lock' capability, so you can use the Seam API to
+# unlock the lock if it is locked or to lock it if it is unlcoked.
+if some_lock.properties["locked"]:
+    seam.locks.unlock_door(some_lock)
+else:
+    seam.locks.lock_door(some_lock)    
+
+    
+    
+    
+class SeamWebhookHandlers(View):
+    # /seam/access-code-webhook
+    def post(self, request, *args, **kwargs):
+        # code here
+        return HttpResponse(status=200)
+        
