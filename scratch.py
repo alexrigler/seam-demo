@@ -84,9 +84,7 @@ print(
     + str(access_code.is_backup_access_code_available)
 )
 
-access_code_id = "dc83d82d-55d2-4178-8c8c-10382311aed2"
-
-backup_code = seam.access_codes.pull_backup_access_code(access_code=access_code_id)
+backup_code = seam.access_codes.pull_backup_access_code(access_code=DUMMY_ACCESS_CODE_ID)
 
 print(backup_code)
 

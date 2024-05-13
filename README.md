@@ -1,28 +1,55 @@
 # Demo using the Seam API
 
-This guide assumes you have already setup a workspace in Seam. Head over to console.seam.co  to get started.
+This guide assumes you have already setup an account in Seam. 
 
 1. Create a Seam account at https://console.seam.co See quickstart guide
 2. You will start with a Sandbox workspace
-3. Create a sandbox device. In this example we'll use Yale.
+3. Create a sandbox device. In this example we'll use a Yale lock and the test credentials provided in the Seam Console
 
-### Dummy data 
+
+```mermaid
+sequenceDiagram
+    participant Guest
+    participant Yessty
+    participant Seam 
+    participant Lock
+
+    Guest->>Yessty: reservation
+    Yessty->>Seam: POST /access_codes/create
+
+    Note over Yessty,Seam: deviced_id, starts_at, ends_at, code, <br/> use_backup_access_code_pool = True
+    Seam-->>Yessty: Action Attempt
+    Yessty->>Seam: GET /access_codes/get
+    Seam-->>Yessty: respond with access code
+
+    %% Yessty provides their guest with access code
+    Note left of Guest: 48 hours before check in
+    Yessty->>Guest: send access_code via email/SMS
+    Note over Guest,Yessty: access_code 48 hours before 'starts_at'
+    Seam->>Lock: set access code on device
+    Lock-->>Seam: event: access code set
+
+    %% if Yessty recieves webhook
+    Note left of Guest: 2 hours before check in starts_at
+    alt access_code failed to set on device
+        Lock->>Seam: failed to set
+        Note over Seam,Lock: access_code.failed_to_set_on_device
+        Seam->>Yessty: Webhook notification
+        Note over Yessty,Seam: Notify Yessty webhook endpoint of failure <br/> access_code.failed_to_set_on_device
+        Yessty-->>Seam: acknowledge webhook 
+        Yessty->>Guest: provide guest with backup code (SMS/Email)
+
+    else access_code set success
+        Note left of Guest: starts_at
+        Seam->>Lock: set access_code on device
+        Seam->>Yessty: EVENT: access_code set on device
+        Seam->>Yessty: EVENT: Door is unlocked
+
+    end
+    Note left of Guest: ends_at
+    Seam->>Lock: access_code is removed at 'ends_at'
+    Seam->>Yessty: access_code was removed from device
 ```
-Guest name:	“Jane Doe”
-Guest email:	“jane@example.com”
-Reservation check-in:	4pm, January 8th, 2024
-Reservation check-out: 	12pm, January 12th, 2024
- Guest telephone number: "650-394-3042" 
-Listing Name: 	“123 Main St”
-Listing Smart Lock ID: 	“abc-1234”
-```
-
-[Seam capability guide for smart locks](https://docs.seam.co/latest/capability-guides/smart-locks)
-
-Understand the lifecycle of access codes. Side effects of Seam API
-* [Create access codes](https://docs.seam.co/latest/capability-guides/smart-locks/access-codes/creating-access-codes)
-
-
 
 ## Task
 
@@ -72,10 +99,28 @@ For this task, please update your prior request diagram to show the following:
 * Yessty server acknowledging the webhook and immediately issuing a request to Seam to request the backup code
 * Yesstly server then sends the backup code to the guest to let them know to use that instead.
 
-Set backup codes https://docs.seam.co/latest/capability-guides/smart-locks/access-codes/backup-access-codes
 
-Events and webhooks
-https://docs.seam.co/latest/api-clients/events
+## Notes
+
+### Dummy data 
+```
+Guest name: “Jane Doe”
+Guest email: “jane@example.com”
+Reservation check-in: 4pm, January 8th, 2024
+Reservation check-out: 12pm, January 12th, 2024
+ Guest telephone number: "650-394-3042" 
+Listing Name: “123 Main St”
+Listing Smart Lock ID: “abc-1234”
+```
+
+[Seam capability guide for smart locks](https://docs.seam.co/latest/capability-guides/smart-locks)
+
+Understand the lifecycle of access codes. Side effects of Seam API
+* [Create access codes](https://docs.seam.co/latest/capability-guides/smart-locks/access-codes/creating-access-codes)
+
+* [Set backup codes](https://docs.seam.co/latest/capability-guides/smart-locks/access-codes/backup-access-codes)
+
+* [Events and webhooks](https://docs.seam.co/latest/api-clients/events)
 Svix docs https://docs.svix.com/
 
 When you request for a device to perform an action, the Seam API will immediately return an Action Attempt object. In the background, the Seam API will perform the action. This Action Attempt allows you to keep track of the progress of your Action.
