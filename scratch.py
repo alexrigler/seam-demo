@@ -7,9 +7,9 @@ from seamapi import Seam
 # from svix.webhooks import Webhook, WebhookVerificationError
 
 
-DUMMY_DEVICE_ID = ""
-DUMMY_ACCESS_CODE_ID = ""
-DUMMY_SECRET = ""
+DUMMY_DEVICE_ID = "123mainST-0001"
+DUMMY_ACCESS_CODE_ID = "1234"
+DUMMY_SECRET = "1234567890"
 
 with open("reservation.json") as reservation_payload:
     reservation_data = json.load(reservation_payload)
@@ -66,7 +66,7 @@ print(
     + str(access_code.is_backup_access_code_available)
 )
 
-# backup_code = seam.access_codes.pull_backup_access_code(access_code=DUMMY_ACCESS_CODE_ID)
+backup_code = seam.access_codes.pull_backup_access_code(access_code=DUMMY_ACCESS_CODE_ID)
 
 # pprint(backup_code)
 
@@ -81,8 +81,8 @@ print(
 #         return HttpResponse(status=400)
 #     return HttpResponse(status=204)
 
-# class SeamWebhookHandlers(View):
-#     # /seam/access-code-webhook
-#     def post(self, request, *args, **kwargs):
-#         # code here
-#         return HttpResponse(status=200)
+class SeamWebhookHandlers(View):
+    # /seam/access-code-webhook
+    def post(self, request, *args, **kwargs):
+        # code here
+        return HttpResponse(status=200)

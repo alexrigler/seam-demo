@@ -51,7 +51,7 @@ sequenceDiagram
     PMS->>Seam: POST /access_codes/create
 
     Note over PMS,Seam: deviced_id, starts_at, ends_at, code, <br/> use_backup_access_code_pool = True
-    Seam-->>PMS: Action Attempt
+    Seam-->>PMS: Action Attempt: CREATE_ACCESS_CODE
 
     %% PMS provides their guest with access code
     Note left of Guest: 48 hours before check in
@@ -62,14 +62,17 @@ sequenceDiagram
     Seam->>Lock: set access code on device
     Lock-->>Seam: event: access code set
 
-    %% if PMS recieves webhook
+    %% if PMS recieves webhook notification of failure
     Note left of Guest: 2 hours before check in starts_at
     alt access_code failed to set on device
         Lock->>Seam: Failed to set access code
         Note over Seam,Lock: access_code.failed_to_set_on_device
-        Seam->>PMS: Webhook notification
+        Seam->>PMS: Webhook notification 'device_id, 
         Note over PMS,Seam: Notify PMS webhook endpoint of failure <br/> access_code.failed_to_set_on_device
         PMS-->>Seam: acknowledge webhook 
+        PMS->>Seam: Pull backup Access Code 
+        Note over PMS,Seam: backup access code removed from pool, <br/> associated with original code, ends_at matches original code, attempt to refill pool
+        Seam-->>PMS: Respond with access code object `access_code_id`
         PMS->>Guest: provide guest with backup code (SMS/Email)
 
     else access_code set success
@@ -89,7 +92,7 @@ sequenceDiagram
 
 ### Creating an access code with Seam
 
-![seam.access_codes.create](https://github.com/alexrigler/seam-demo/blob/main/carbon.png?raw=true)
+![seam.access_codes.create](https://github.com/alexrigler/seam-demo/blob/main/create-access-code.png?raw=true)
 
 ```python
 from seamapi import Seam
@@ -97,7 +100,6 @@ from seamapi import Seam
 # export SEAM_API_KEY=***
 seam = Seam()
 
-y_lock = seam.locks.list()[0]
 
 ```
 
