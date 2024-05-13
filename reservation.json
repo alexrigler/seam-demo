@@ -1,9 +1,9 @@
 {
-    "guest_name": "Jane Doe",
-    "guest_email": "jane@example.com",
-    "guest_telephone": "+1 650-394-3042",
-    "reservation_check_in": "01/08/24 16:00:00",
-    "reservation_check_out": "01/12/24 12:00:00",
-    "listing_name": "123 Main St",
-    "listing_smart_lock_id": "abc-1234"
-  }
+  "guest_name": "Jane Doe",
+  "guest_email": "jane@example.com",
+  "guest_telephone": "+1 650-394-3042",
+  "reservation_check_in": "01/08/24 16:00:00",
+  "reservation_check_out": "01/12/24 12:00:00",
+  "listing_name": "123 Main St",
+  "listing_smart_lock_id": "abc-1234"
+}
