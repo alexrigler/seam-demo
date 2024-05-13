@@ -9,6 +9,7 @@ readme = "README.md"
 python = "^3.12"
 seamapi = "^2.19.0"
 django = "^5.0.6"
+setuptools = "^69.5.1"
 
 
 [build-system]

@@ -12,7 +12,7 @@ Guest name:	“Jane Doe”
 Guest email:	“jane@example.com”
 Reservation check-in:	4pm, January 8th, 2024
 Reservation check-out: 	12pm, January 12th, 2024
- Guest telephone number:	650-394-3042 
+ Guest telephone number: "650-394-3042" 
 Listing Name: 	“123 Main St”
 Listing Smart Lock ID: 	“abc-1234”
 ```
