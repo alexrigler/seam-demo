@@ -5,5 +5,5 @@
     "reservation_check_in": "01/08/24 16:00:00",
     "reservation_check_out": "01/12/24 12:00:00",
     "listing_name": "123 Main St",
-    "listing_smart_lock_id": "abc-1234",
-}
+    "listing_smart_lock_id": "abc-1234"
+  }
