@@ -51,6 +51,10 @@ sequenceDiagram
     Seam->>Yessty: access_code was removed from device
 ```
 
+## Code sample
+
+![seam.access_codes.create](https://github.com/alexrigler/seam-demo/blob/main/carbon.png?raw=true)(./carbon.png)
+
 ## Task
 
 Overview
@@ -120,7 +124,7 @@ Understand the lifecycle of access codes. Side effects of Seam API
 
 * [Set backup codes](https://docs.seam.co/latest/capability-guides/smart-locks/access-codes/backup-access-codes)
 
-* [Events and webhooks](https://docs.seam.co/latest/api-clients/events)
+* [`Events and webhooks`](https://docs.seam.co/latest/api-clients/events)
 Svix docs https://docs.svix.com/
 
 When you request for a device to perform an action, the Seam API will immediately return an Action Attempt object. In the background, the Seam API will perform the action. This Action Attempt allows you to keep track of the progress of your Action.
