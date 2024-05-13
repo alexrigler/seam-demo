@@ -20,12 +20,12 @@ sequenceDiagram
         Lock->>Seam: failed to set
         Note over Seam,Lock: access_code.failed_to_set_on_device
         Seam->>Yessty: Webhook 
-        Note over Seam: webhooks must be set up
-        Seam->>Yessty: EVENT: 
-        Yessty->>Guest: 2hrs before check in send 
+        Note over Yessty,Seam: Notify Yessty webhook endpoint of failure <br/> access_code.failed_to_set_on_device
+        Yessty->>Guest: provide guest with backup code (SMS/Email)
 
     else access_code set success
         Note left of Guest: starts_at
+        Seam->>Lock: set access_code on device
         Seam->>Yessty: EVENT: access_code set on device
         Seam->>Yessty: EVENT: Door is unlocked
 
